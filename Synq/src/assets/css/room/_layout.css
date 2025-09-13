@@ -1,0 +1,29 @@
+/* public/css/room/_layout.css */
+
+/* ---------------------------------- */
+/* 2. Main Layout & Structure         */
+/* ---------------------------------- */
+.main-container {
+  height: var(--app-height, 100dvh);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Add padding to create space on the sides and bottom. */
+  padding: 0 8px 8px 8px;
+  gap: 8px; /* Add a small gap between the elements */
+  transition:
+    padding 0.3s ease,
+    gap 0.3s ease; /* Animation for gaps */
+}
+
+/* This rule makes the floating content panel fill all remaining vertical space */
+.main-container > .floating-content-panel {
+  flex: 1;
+  min-height: 0; /* This is crucial for flex-grow to work correctly in a column */
+}
+
+/* --- NEW: Focus Mode Styles for main-container --- */
+body.focus-mode-active .main-container {
+  padding: 0; /* Remove all padding */
+  gap: 0; /* Remove gaps between sections */
+}

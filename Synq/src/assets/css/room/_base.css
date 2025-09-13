@@ -1,0 +1,40 @@
+/* public/css/room/_base.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+/* ---------------------------------- */
+/* 1. Root Variables & Global Styles  */
+/* ---------------------------------- */
+:root {
+  --bg: #121212;
+  --panel: #181818;
+  --muted: #888;
+  --accent: #00aaff;
+  --panel-2: #1f1f1f;
+  --bubble-other: #2c2c2c;
+  --text: #e0e0e0;
+  --seek-bar-color: var(--accent);
+  --seek-bar-bg: rgba(255, 255, 255, 0.4);
+  --button-bg: rgba(0, 0, 0, 0.6);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}

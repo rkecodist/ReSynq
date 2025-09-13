@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+@import url('common/_modal.css'); /* Shared modal styles */
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+/* Set the body to be a perfect, non-scrolling frame.
+   NO display:grid or flex. It's a simple block container. */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: var(--app-height, 100dvh);
+  overflow: hidden;
+  position: relative; /* Establish a positioning context for the wrapper */
+}
+
+/* The body is now simple, just like the room page's body */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #0d0d0d;
+  color: #e0e0e0;
+  text-align: center;
+}
+
+/* --- MODIFIED: Classic Absolute Centering --- */
+/* This is the robust way to center content without affecting the body's layout behavior. */
+.page-wrapper {
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* 
+       translate(-50%, -50%) would be perfect center.
+       We use -60% on the Y-axis to achieve the original upward shift.
+       This transform does NOT affect the body or the fixed-position modal.
+    */
+  transform: translate(-50%, -60%);
+}
+
+/* ===== Layout Container ===== */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 500px;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+/* --- The rest of the file remains unchanged --- */
+
+/* ===== Headings ===== */
+header h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #00aaff;
+  margin: 0 0 10px;
+}
+
+main h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0 0 10px;
+  line-height: 1.4;
+}
+
+main p {
+  font-size: 1rem;
+  color: #a0a0a0;
+  line-height: 1.6;
+  margin: 0 0 25px;
+}
+
+/* ===== Buttons & Forms ===== */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+#create-room-btn {
+  background: linear-gradient(135deg, #00aaff, #0088cc);
+  color: #fff;
+  border: none;
+  padding: 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  width: 100%;
+}
+
+#create-room-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 170, 255, 0.3);
+}
+
+.join-form {
+  display: flex;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #1a1a1a;
+}
+
+#join-room-input {
+  flex: 1;
+  padding: 15px;
+  border: none;
+  background-color: transparent;
+  color: #e0e0e0;
+  font-size: 1rem;
+  outline: none;
+}
+
+#join-room-input::placeholder {
+  color: #888;
+}
+
+#join-room-btn {
+  background: #00aaff;
+  border: none;
+  width: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#join-room-btn:hover {
+  background: #0088cc;
+}
+
+#join-room-btn svg {
+  fill: #fff;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 500px) {
+  header h1 {
+    font-size: 2.5rem;
+  }
+  main h2 {
+    font-size: 1.4rem;
+  }
+}

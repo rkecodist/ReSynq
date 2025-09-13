@@ -1,0 +1,109 @@
+/* public/css/room/_media-tab.css */
+
+/* --- Grid Container --- */
+.media-source-grid {
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+  overflow-y: auto;
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(120px, 130px));
+  gap: 16px;
+
+  align-content: start;
+  justify-content: start;
+}
+
+/* --- Source Card Styling --- */
+.media-source-card {
+  /* Reset button styles */
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+
+  /* [THE FIX] Make the text and icon unselectable */
+  user-select: none;
+  -webkit-user-select: none; /* For Safari */
+
+  /* Card layout */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+
+  /* Card appearance */
+  background-color: var(--panel-2);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  /* Make it a square */
+  aspect-ratio: 1 / 1;
+
+  /* Smooth transitions for interactions */
+  transition:
+    transform 0.2s cubic-bezier(0.25, 1, 0.5, 1),
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.media-source-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 170, 255, 0.15);
+  border-color: rgba(0, 170, 255, 0.3);
+}
+
+.media-source-card:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 2px 8px rgba(0, 170, 255, 0.1);
+}
+
+/* Style for disabled cards in the future */
+.media-source-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+  filter: grayscale(80%);
+}
+.media-source-card:disabled:hover {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* --- Card Icon --- */
+.media-card-icon {
+  width: 48px;
+  height: 48px;
+  fill: var(--accent);
+}
+
+/* --- Card Label --- */
+.media-card-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* --- Style for the Shortcut Button in the Placeholder --- */
+.shortcut-btn {
+  background: linear-gradient(135deg, #00aaff, #0088cc);
+  color: #fff;
+  border: none;
+  padding: 15px 28px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.shortcut-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 170, 255, 0.3);
+}

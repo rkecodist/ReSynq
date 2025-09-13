@@ -1,0 +1,309 @@
+/* public/css/room/_chat.css */
+
+/* ---------------------------------- */
+/* 6. Chat Area                       */
+/* ---------------------------------- */
+/* [MODIFIED] The old .chat-wrapper rules are removed. The #chat-page (a .tab-page) 
+   and its children now define the chat layout internally. */
+
+.chat-box {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  overflow: hidden;
+  background: transparent;
+}
+
+.message-list {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 10px 6px 10px 10px;
+}
+
+/* This container holds both the form and the picker */
+.chat-interaction-area {
+  flex-shrink: 0; /* Prevents this area from shrinking */
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-input-form {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background: var(--panel-2);
+  align-items: flex-end;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.chat-input-wrapper {
+  flex: 1 1 auto;
+  display: flex;
+  position: relative;
+}
+.chat-input-container {
+  flex: 1;
+  display: flex;
+  align-items: flex-end; /* Align button to bottom */
+  border-radius: 18px;
+  background: #3a3a3a;
+  border: 1px solid #555;
+  overflow: hidden;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.chat-input-container:focus-within {
+  border-color: transparent;
+  box-shadow:
+    0 0 0 2px #121212,
+    0 0 0 3.5px #ffffff;
+}
+#chat-input {
+  width: 100%;
+  min-height: 22px;
+  /* MODIFIED: Removed hard-coded max-height. JS will handle this now. */
+  /* max-height: 120px; */
+  resize: none;
+  padding: 10px 48px 10px 12px;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  outline: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.2s ease-in-out;
+}
+#chat-input::placeholder {
+  color: #9a9a9a;
+}
+#chat-input::-webkit-scrollbar {
+  width: 10px;
+}
+#chat-input::-webkit-scrollbar-track {
+  background: transparent;
+}
+#chat-input::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 20px;
+  border: 3px solid #3a3a3a;
+  background-clip: padding-box;
+  transition: background-color 0.2s ease-in-out;
+}
+.chat-input-container:focus-within #chat-input {
+  scrollbar-color: #555 #3a3a3a;
+}
+.chat-input-container:focus-within #chat-input::-webkit-scrollbar-thumb {
+  background-color: #555;
+}
+
+#send-chat-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+#send-chat-btn:active {
+  transform: scale(0.9);
+}
+#send-chat-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: #fff;
+}
+
+/* --- Emoji Picker Styles --- */
+.emoji-picker-btn {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+.emoji-picker-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+.emoji-picker-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+.emoji-picker-panel {
+  /* MODIFIED: Removed fixed height. JS will now control this. */
+  background-color: var(--panel-2);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transition: height 0.2s ease; /* Add transition for smooth resizing */
+}
+.emoji-picker-panel.is-hidden {
+  display: none;
+}
+
+.emoji-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  align-content: start;
+}
+
+.emoji-item {
+  background: none;
+  border: none;
+  border-radius: 8px;
+  padding: 4px;
+  cursor: pointer;
+  
+  /* [THE FIX - Step 1] Prepare for animation */
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* [THE FIX - Step 2] Define the visible state */
+.emoji-item.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.emoji-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.emoji-item img {
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+
+/* --- Chat Bubbles & Messages --- */
+.message-container {
+  display: flex;
+  max-width: 85%;
+  align-items: flex-start;
+  gap: 10px;
+}
+.chat-dp {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background-color: #333;
+  /* [FIX] Prevent dragging and selection */
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.message-bubble {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px;
+  border-radius: 18px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+/* This is the fix for long text overflow */
+.message-text {
+  line-height: 1.4;
+  white-space: pre-line;
+
+  /* These properties force long, unbroken strings to wrap */
+  overflow-wrap: break-word;
+  word-wrap: break-word; /* Legacy fallback */
+  word-break: break-all; /* Force break for very stubborn strings */
+}
+
+.message-text .chat-emoji {
+  height: 28px;
+  width: auto;
+  vertical-align: middle;
+  margin: 2px 3px; /* 2px top/bottom, 3px left/right */
+  /* [FIX] Prevent dragging and selection */
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.sender-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.chat-icon {
+  width: 16px;
+  height: 16px;
+}
+.chat-icon.host-icon {
+  fill: #f0c420;
+}
+.chat-icon.viewer-icon {
+  fill: var(--muted);
+}
+.message-container.other {
+  align-self: flex-start;
+}
+.message-container.other .message-bubble {
+  background: var(--bubble-other);
+  color: var(--text);
+  border-top-left-radius: 4px;
+}
+.message-container.self {
+  align-self: flex-end;
+}
+.message-container.self .message-bubble {
+  background: var(--accent);
+  color: #fff;
+  border-top-right-radius: 4px;
+}
+.message-container.self .sender-name {
+  display: none;
+}
+.system-message {
+  color: #aaa;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 6px 12px;
+  border-radius: 30px;
+  font-style: italic;
+  font-size: 0.8rem;
+  align-self: center;
+}
+.system-message strong {
+  font-weight: 700;
+  font-style: normal;
+  color: #ccc;
+}

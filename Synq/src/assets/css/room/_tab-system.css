@@ -1,0 +1,272 @@
+/* public/css/room/_tab-system.css */
+
+/* --- 1. Tab Controller (The floating action strip) --- */
+.room-actions-header {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  z-index: 30;
+  /* Add explicit transition for height and padding for smooth collapse */
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease,
+    padding 0.3s ease,
+    height 0.3s ease;
+  /* NEW: Performance optimization for animation */
+  will-change: transform, opacity, height;
+}
+
+/* --- Hide Action Header in Focus Mode --- */
+body.focus-mode-active .room-actions-header {
+  transform: translateY(-100%); /* Slide up and out of view */
+  opacity: 0;
+  height: 0; /* Collapse height */
+  padding: 0; /* Remove padding to fully collapse space */
+  overflow: hidden; /* Hide any content that slides up */
+  pointer-events: none; /* Make it unclickable */
+}
+
+.action-buttons-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tab-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.tab-btn svg {
+  width: 28px;
+  height: 28px;
+  fill: var(--muted);
+  transition: all 0.25s ease;
+}
+
+.tab-btn:hover {
+  background-color: var(--panel-2);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.tab-btn:hover svg {
+  fill: var(--text);
+}
+.tab-btn.active {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+.tab-btn.active svg {
+  fill: #fff;
+}
+
+/* --- 2. Floating Content Panel --- */
+.floating-content-panel {
+  flex: 1; /* Crucial: remains a flex item to fill remaining space */
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--panel);
+  border-radius: 24px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  position: relative; /* Keep relative for inner absolute positioning like title/button */
+  /* Adjusted transition for smooth visual changes, z-index transition is minimal */
+  transition:
+    border-radius 0.3s ease,
+    box-shadow 0.3s ease,
+    z-index 0.01s linear 0.29s;
+  z-index: 10; /* Default z-index */
+  /* NEW: Performance optimization for animation */
+  will-change: border-radius, box-shadow;
+}
+
+/* --- Focus Mode Styles for floating-content-panel --- */
+body.focus-mode-active .floating-content-panel {
+  border-radius: 0; /* No rounded corners */
+  box-shadow: none; /* No shadow */
+  z-index: 31; /* Above action header (30), for overlapping effect during transition */
+  transition:
+    border-radius 0.3s ease,
+    box-shadow 0.3s ease,
+    z-index 0.01s linear; /* z-index changes immediately */
+}
+
+/* --- [UI-FIX] Focus Mode Button is now always visible --- */
+.focus-mode-toggle-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--panel-2);
+  border: none;
+  /* This creates the "attached" corner look */
+  border-radius: 0 24px 0 12px; /* top-left, top-right, bottom-right, bottom-left */
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    opacity 0.2s ease,
+    border-radius 0.3s ease;
+  opacity: 1; /* Always visible */
+  pointer-events: auto; /* Always clickable */
+}
+
+/* [UI-FIX] This rule is no longer needed and has been removed.
+/* .floating-content-panel:has(#chat-page.is-active) .focus-mode-toggle-btn { ... } */
+
+/* NEW: Adjust button's corner radius when in focus mode to match container */
+body.focus-mode-active .focus-mode-toggle-btn {
+  border-radius: 0 0 0 12px; /* Make top-right corner sharp */
+}
+
+.focus-mode-toggle-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--text);
+}
+
+body.focus-mode-active .focus-mode-toggle-btn svg {
+  fill: var(--accent);
+}
+
+/* --- 3. Centered Nameplate Title --- */
+.tab-title-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+.tab-title-plate {
+  clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 15% 100%);
+  background: var(--panel-2);
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 5px 18px;
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+}
+
+.tab-title-plate.active {
+  opacity: 1;
+}
+
+/* --- 4. State-Based Animation System --- */
+.tab-content-wrapper {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  padding-top: 16px;
+}
+
+.tab-page {
+  position: absolute;
+  top: 16px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 16px);
+
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  display: flex;
+  flex-direction: column;
+  z-index: 0;
+}
+.tab-page.is-prev {
+  transform: translateX(-100%);
+}
+.tab-page.is-active {
+  transform: translateX(0);
+  z-index: 1;
+}
+.tab-page.is-next {
+  transform: translateX(100%);
+}
+
+/* --- 5. Specific Page Styles --- */
+#participants-page {
+  overflow-y: auto;
+}
+#participants-page .participants-list {
+  max-height: none;
+  width: 100%;
+}
+
+.info-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.info-item {
+  text-align: center;
+  color: var(--muted);
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+}
+
+.info-item p {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #ccc;
+}
+
+.info-display-box {
+  background: var(--panel-2);
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+  overflow: auto;
+  white-space: normal;
+  text-overflow: clip;
+  display: block;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  line-height: 1.4;
+}
+.info-display-box:hover {
+  background-color: #3a3a3a;
+  border-color: rgba(0, 170, 255, 0.3);
+}
+
+.info-display-box #room-id-display,
+.info-display-box #invite-link-display {
+  font-family: monospace;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent);
+  display: block;
+  word-break: break-all;
+}

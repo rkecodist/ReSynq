@@ -1,0 +1,10 @@
+@import url('room/_base.css');
+@import url('common/_modal.css'); /* CORRECTED: The path does not need ../ */
+@import url('room/_layout.css');
+@import url('room/_player.css');
+@import url('room/_chat.css');
+@import url('room/_panel.css');
+@import url('room/_popup.css'); /* NEW: Add popup styles */
+@import url('room/_tab-system.css'); /* [MODIFIED] Import the new tab system styles */
+@import url('room/_media-tab.css'); /* [NEW] Import the media tab styles */
+@import url('room/_voice.css'); /* [NEW] Import the voice chat styles */

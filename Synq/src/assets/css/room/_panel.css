@@ -1,0 +1,252 @@
+/* public/css/room/_panel.css */
+
+/* [NEW] Restored generic styles for any full-screen overlay component.
+   These are required by the subtitle popup (_wide-popup.html) and other modals. */
+.overlay-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+  /* --- This is the blur effect we want for most modals --- */
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.overlay-container.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.overlay-panel {
+  background: var(--panel);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 380px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transform: scale(1);
+  transition: transform 0.25s ease;
+}
+.overlay-container.hidden .overlay-panel {
+  transform: scale(0.95);
+}
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.panel-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0 8px;
+}
+.close-btn:hover {
+  color: var(--text);
+}
+
+/* --- FIX: High-priority z-index for session deactivation --- */
+/* This ensures the "Session Inactive" overlay appears on top of all other UI,
+   including other popups or modals that might be open. */
+#deactivated-overlay {
+  z-index: 4000;
+}
+/* --- END OF FIX --- */
+
+/* ---------------------------------- */
+/* 7. Participants List Items         */
+/* (These styles are now used inside the Participants tab) */
+/* ---------------------------------- */
+.participants-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.participant-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 20px;
+}
+.participant-dp {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: var(--bubble-other);
+  /* [FIX] Prevent dragging and selection */
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.participant-name-container {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.participant-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+.participant-icon.host-icon {
+  fill: #f0c420;
+}
+.participant-icon.viewer-icon {
+  fill: var(--muted);
+}
+.participant-name {
+  font-weight: 700;
+}
+.you-badge {
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ---------------------------------- */
+/* 8. Toast Notification UI           */
+/* ---------------------------------- */
+.toast {
+  visibility: hidden;
+  opacity: 0;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 28px;
+  text-align: center;
+  max-width: 80%;
+  background: #333;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  /* MODIFIED: Increased z-index to appear above modals */
+  z-index: 3000;
+  transition:
+    opacity 0.3s ease,
+    transform 0.25s ease;
+}
+.toast.show {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(-6px);
+}
+
+/* ---------------------------------- */
+/* 9. Custom Scrollbars               */
+/* ---------------------------------- */
+.message-list,
+.participants-list {
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease-in-out;
+}
+.message-list::-webkit-scrollbar,
+.participants-list::-webkit-scrollbar {
+  width: 10px;
+}
+.message-list::-webkit-scrollbar-track,
+.participants-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.message-list::-webkit-scrollbar-thumb,
+.participants-list::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 20px;
+  border: 3px solid var(--panel);
+  background-clip: padding-box;
+  transition: background-color 0.3s ease-in-out;
+}
+/* [MODIFIED] Update hover target to the new main container */
+.floating-content-panel:hover .message-list,
+.floating-content-panel:hover .participants-list {
+  scrollbar-color: #555 var(--panel);
+}
+.floating-content-panel:hover .message-list::-webkit-scrollbar-thumb,
+.floating-content-panel:hover .participants-list::-webkit-scrollbar-thumb {
+  background-color: #555;
+}
+
+/* --- Format Info Panel Specifics --- */
+/* (These styles are for a different modal and are still needed) */
+.overlay-panel .panel-content {
+  padding: 0 20px 20px;
+  line-height: 1.6;
+}
+
+.format-section {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.format-section h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.format-section.recommended {
+  border-color: rgba(0, 170, 255, 0.4);
+  background-color: rgba(0, 170, 255, 0.05);
+}
+
+.format-section.limited {
+  border-color: rgba(240, 196, 32, 0.4); /* Warning yellow */
+  background-color: rgba(240, 196, 32, 0.05);
+}
+
+.format-section p {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.format-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.format-section ul li {
+  margin-bottom: 6px;
+}
+
+.format-section ul li strong {
+  color: var(--text);
+  display: inline-block;
+  width: 120px; /* Aligns the values */
+}
+
+.format-footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.85rem;
+}
+
+.format-footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.format-footer a:hover {
+  text-decoration: underline;
+}

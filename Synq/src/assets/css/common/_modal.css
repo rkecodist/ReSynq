@@ -1,0 +1,199 @@
+/* public/css/common/_modal.css
+   Hardened modal styles to avoid body/flex/transform conflicts
+*/
+
+/* --- Keyframes --- */
+@keyframes spin-once {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Modal container (viewport overlay) --- */
+.modal-container {
+  /* Force full-viewport overlay and ignore ancestor sizing */
+  position: fixed !important;
+  inset: 0 !important; /* top:0; right:0; bottom:0; left:0; */
+  z-index: 2000 !important;
+
+  /* internal centering */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* Prevent body flex rules from affecting us */
+  flex: none !important;
+  align-self: auto !important;
+  justify-self: auto !important;
+
+  /* ensure mouse events pass through overlay properly */
+  pointer-events: auto;
+  transition: opacity 0.25s ease;
+  box-sizing: border-box;
+}
+
+.modal-container.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Overlay covers viewport — fixed so it can't be clipped by ancestor */
+.modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: rgba(0, 0, 0, 0.8);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  z-index: 2001;
+}
+
+/* Panel: use clamp so it cannot grow to full width */
+.modal-panel {
+  position: relative;
+  z-index: 2002;
+
+  background: linear-gradient(180deg, #222 0%, #181818 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+
+  /* safe sizing: never smaller than 280px, never larger than 360px,
+       but allow slightly smaller screens */
+  width: clamp(280px, 90%, 360px);
+  max-width: 100%;
+  padding: 28px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+  transform: scale(1);
+  opacity: 1;
+  transition:
+    transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    opacity 0.25s ease;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+  margin: 0; /* center via parent flex */
+}
+
+/* shrink animation when hidden */
+.modal-container.hidden .modal-panel {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+/* Typography */
+.modal-panel h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fff;
+}
+.modal-panel p {
+  margin: 0;
+  font-size: 1rem;
+  color: #a0a0a0;
+  line-height: 1.5;
+}
+
+/* Avatar */
+.dp-container {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  align-self: center;
+  margin-top: 4px;
+}
+.dp-container img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #333;
+  box-shadow:
+    0 0 15px rgba(0, 170, 255, 0.45),
+    0 0 5px rgba(0, 170, 255, 0.7);
+  /* [FIX] Prevent dragging and selection */
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.dp-refresh-btn {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  width: 40px;
+  height: 40px;
+  background: #00aaff;
+  border: 3px solid #1f1f1f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.18s ease;
+}
+.dp-refresh-btn:hover {
+  transform: scale(1.06);
+}
+.dp-refresh-btn.spinning {
+  animation: spin-once 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.dp-refresh-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: #fff;
+}
+
+/* Input & Button */
+.username-input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background-color: #242424; /* stronger contrast vs panel */
+  color: #eaeaea;
+  font-size: 1.05rem;
+  font-weight: 500;
+  text-align: center;
+  outline: none;
+  box-shadow: none;
+  transition:
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.username-input::placeholder {
+  color: #8a8a8a;
+}
+.username-input:focus {
+  box-shadow: 0 0 0 3px rgba(0, 170, 255, 0.08);
+  border-color: rgba(0, 170, 255, 0.18);
+}
+
+/* Continue button */
+.continue-btn {
+  background: linear-gradient(135deg, #00aaff, #0088cc);
+  color: #fff;
+  border: none;
+  padding: 14px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  margin-top: 4px;
+}
+.continue-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 170, 255, 0.22);
+}
