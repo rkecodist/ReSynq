@@ -37,7 +37,11 @@
 
       <div class="tab-content-wrapper">
         <Transition :name="slideDirection" mode="out-in">
-          <component :is="activeComponent" class="tab-page" />
+          <!-- 
+            The 'id' attribute is added here so our child components 
+            (like ChatInput) can find this element for sizing calculations.
+          -->
+          <component :is="activeComponent" :id="`${activeTab}-page`" class="tab-page" />
         </Transition>
       </div>
     </aside>
@@ -48,6 +52,8 @@
 import { ref, computed } from 'vue';
 import ParticipantsList from '@/components/room/ParticipantsList.vue';
 import InfoTab from '@/components/room/InfoTab.vue';
+// 1. IMPORT THE NEW CHAT COMPONENT
+import Chat from '@/components/room/Chat.vue';
 
 const Placeholder = {
   template: '<div style="text-align: center; margin-top: 40px; color: #888;">Content coming soon...</div>'
@@ -65,7 +71,8 @@ const tabs = [
 ];
 
 const components: { [key: string]: any } = {
-  chat: Placeholder,
+  // 2. REPLACE THE PLACEHOLDER WITH THE ACTUAL CHAT COMPONENT
+  chat: Chat,
   media: Placeholder,
   voice: Placeholder,
   participants: ParticipantsList,
