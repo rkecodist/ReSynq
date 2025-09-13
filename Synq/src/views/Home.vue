@@ -17,7 +17,7 @@
             <button id="create-room-btn" @click="handleCreateRoom">
               Create a Watch Party
             </button>
-            
+
             <!-- We use @submit.prevent to stop the default form submission -->
             <form class="join-form" @submit.prevent="handleJoinRoom">
               <!-- v-model creates a two-way binding between the input and our `joinRoomId` variable -->
@@ -35,7 +35,9 @@
                   width="24"
                   height="24"
                 >
-                  <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                  <path
+                    d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
+                  />
                 </svg>
               </button>
             </form>
@@ -124,7 +126,7 @@ function ensureProfile(heading: string, subheading: string): Promise<boolean> {
 /**
  * This function is called when the ProfileModal emits the `profileCreated` event.
  */
-function onProfileCreated(profile: { username: string, dpUrl: string }) {
+function onProfileCreated(profile: { username: string; dpUrl: string }) {
   // Use the data from the modal to create the profile in our Pinia store.
   profileStore.createProfile(profile.username, profile.dpUrl)
   // Now that the profile is created, we resolve the promise from `ensureProfile`.
@@ -141,7 +143,7 @@ async function handleCreateRoom() {
   try {
     // First, wait for the profile to be ready.
     await ensureProfile('First, Your Alias', 'Choose an avatar and name to create a party.')
-    
+
     // Once ensured, get the userId from the store.
     const userId = profileStore.userId! // The "!" tells TypeScript we know userId is not null here.
 
@@ -169,7 +171,7 @@ async function handleJoinRoom() {
   try {
     // Wait for the profile to be ready.
     await ensureProfile('Welcome to the Party', 'Set your name before you join.')
-    
+
     // Check if the room exists.
     const exists = await roomService.checkRoom(roomIdToJoin)
 
@@ -194,11 +196,10 @@ function handleDeleteData() {
   )
 }
 
-
 // --- LIFECYCLE HOOK ---
 // `onMounted` is a hook that runs after the component has been added to the page.
 // We use it to initialize our profile store from localStorage.
-onMounted(()' => {
+onMounted(() => {
   profileStore.initializeProfile()
 })
 </script>
