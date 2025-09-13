@@ -34,7 +34,9 @@ import { useRoute, useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
 import { useRoomStore } from '@/stores/room';
 import { useSocket } from '@/composables/useSocket';
-import TabSystem from '@/components/room/TabSystem.vue'; // Import our new component
+// 1. Import the new useSession composable.
+import { useSession } from '@/composables/useSession';
+import TabSystem from '@/components/room/TabSystem.vue';
 
 // --- SETUP ---
 const route = useRoute();
@@ -42,6 +44,8 @@ const router = useRouter();
 const profileStore = useProfileStore();
 const roomStore = useRoomStore();
 const { socket, connect, disconnect } = useSocket();
+// 2. Initialize the composable to get access to its functions.
+const { getSessionId } = useSession();
 
 const roomIdFromUrl = Array.isArray(route.params.roomId)
   ? route.params.roomId[0]
@@ -63,14 +67,16 @@ onMounted(() => {
 
   // Register all our event listeners.
   socket.on('connect', () => {
-    roomStore.setConnectionState(socket.id);
+    roomStore.setConnectionState(socket.id!);
     
     // Once connected, we can emit the event to join the room.
     const joinData = {
       roomId: roomIdFromUrl,
       userId: profileStore.userId,
       username: profileStore.username,
-      sessionId: `session_${socket.id}`, // Placeholder
+      // 3. THIS IS THE FIX: We now call getSessionId() to get the real,
+      //    per-tab session ID from sessionStorage, replacing the old placeholder.
+      sessionId: getSessionId(),
       dpUrl: profileStore.dpUrl,
     };
     socket.emit('join-room', joinData);
