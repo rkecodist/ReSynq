@@ -13,20 +13,26 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  // This is the new section to add.
   server: {
     proxy: {
-      // Proxy requests that start with '/socket.io'
+      // This rule for Socket.IO is correct and remains unchanged.
       '/socket.io': {
-        target: 'http://localhost:3000', // Your Node.js backend
-        ws: true, // IMPORTANT: Enable WebSocket proxying
+        target: 'http://localhost:3000',
+        ws: true,
       },
-      // Proxy API requests (e.g., /create-room, /check-room)
-      // We use a regex here to catch any path that doesn't seem like a file.
-      '^/(create-room|check-room)/.*': {
+      // --- THIS IS THE CORRECTED PART ---
+      // Rule for the create room POST request.
+      // It matches the exact path '/create-room'.
+      '/create-room': {
+        target: 'http://localhost:3000',
+        changeOrigin: true, // Recommended for avoiding CORS issues
+      },
+      // Rule for the check room GET request.
+      // It matches any path that *starts with* '/check-room'.
+      '/check-room': {
         target: 'http://localhost:3000',
         changeOrigin: true,
-      },
+      }
     }
   }
 })
