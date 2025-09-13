@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <!-- 
+    SOLUTION: We add a class to this root div so we can target it with our new style.
+  -->
+  <div class="tab-system-wrapper">
     <header class="room-actions-header">
       <div class="action-buttons-container">
         <button
@@ -33,18 +36,7 @@
       </div>
 
       <div class="tab-content-wrapper">
-        <!-- 
-          We wrap our content in Vue's <Transition> component.
-          The `name` is dynamically bound to our `slideDirection` ref.
-          The `mode="out-in"` ensures the old tab animates out before the new one animates in,
-          which is visually cleaner.
-        -->
         <Transition :name="slideDirection" mode="out-in">
-          <!-- 
-            We use a dynamic component `:is` here. This is a more advanced and cleaner
-            way to handle conditional rendering than a long chain of v-if/v-else-if.
-            It will render the component whose name matches the `activeComponent` computed property.
-          -->
           <component :is="activeComponent" class="tab-page" />
         </Transition>
       </div>
@@ -57,16 +49,13 @@ import { ref, computed } from 'vue';
 import ParticipantsList from '@/components/room/ParticipantsList.vue';
 import InfoTab from '@/components/room/InfoTab.vue';
 
-// Define a placeholder component for tabs we haven't built yet.
 const Placeholder = {
   template: '<div style="text-align: center; margin-top: 40px; color: #888;">Content coming soon...</div>'
 }
 
-// --- STATE ---
 const activeTab = ref('chat');
-const slideDirection = ref('slide-left'); // Default direction
+const slideDirection = ref('slide-left'); 
 
-// --- DATA ---
 const tabs = [
   { id: 'chat', label: 'Show Chat', title: 'CHATS', icon: '<path d="M240-400h320v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z" transform="scale(0.025) translate(0, 960)"/>'},
   { id: 'media', label: 'Show Media', title: 'MEDIA', icon: '<path d="m460-380 280-180-280-180v360ZM320-240q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z" transform="scale(0.025) translate(0, 960)"/>' },
@@ -75,7 +64,6 @@ const tabs = [
   { id: 'info', label: 'Show Info', title: 'INFO', icon: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>' }
 ];
 
-// Map tab IDs to actual Vue components.
 const components: { [key: string]: any } = {
   chat: Placeholder,
   media: Placeholder,
@@ -84,32 +72,34 @@ const components: { [key: string]: any } = {
   info: InfoTab,
 };
 
-// This computed property dynamically returns the correct component for the active tab.
 const activeComponent = computed(() => components[activeTab.value]);
 
-// Create a map for quick index lookups.
 const tabIndexMap = new Map(tabs.map((tab, index) => [tab.id, index]));
 
-// --- METHODS ---
 function setActiveTab(tabId: string) {
   const currentIndex = tabIndexMap.get(activeTab.value) ?? 0;
   const nextIndex = tabIndexMap.get(tabId) ?? 0;
-
-  // Determine the slide direction based on tab index.
   slideDirection.value = nextIndex > currentIndex ? 'slide-left' : 'slide-right';
-
   activeTab.value = tabId;
 }
 </script>
 
-<style>
-/* 
-  We add the transition CSS here. These are NOT scoped, because we need them
-  to apply to the `.tab-page` class which lives inside our child components.
-  This mirrors the logic from your original `_tab-system.css`.
-*/
+<!-- SOLUTION: Add the scoped style block below -->
+<style scoped>
+.tab-system-wrapper {
+  /* This tells the wrapper to grow and fill the available vertical space. */
+  flex: 1;
+  /* This is crucial for flex-grow to work in a column layout. */
+  min-height: 0;
+  
+  /* This makes the wrapper a flex container for its own children. */
+  display: flex;
+  flex-direction: column;
+}
+</style>
 
-/* --- Slide Left Transition (Moving to a tab on the right) --- */
+<style>
+/* Non-scoped transition styles remain the same */
 .slide-left-enter-active,
 .slide-left-leave-active {
   transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
@@ -121,7 +111,6 @@ function setActiveTab(tabId: string) {
   transform: translateX(-100%);
 }
 
-/* --- Slide Right Transition (Moving to a tab on the left) --- */
 .slide-right-enter-active,
 .slide-right-leave-active {
   transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
