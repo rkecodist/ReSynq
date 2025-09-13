@@ -1,7 +1,4 @@
 <template>
-  <!-- 
-    SOLUTION: We add a class to this root div so we can target it with our new style.
-  -->
   <div class="tab-system-wrapper">
     <header class="room-actions-header">
       <div class="action-buttons-container">
@@ -37,7 +34,7 @@
 
       <div class="tab-content-wrapper">
         <Transition :name="slideDirection" mode="out-in">
-          <component :is="activeComponent" class="tab-page" />
+          <component :is="activeComponent" />
         </Transition>
       </div>
     </aside>
@@ -48,13 +45,18 @@
 import { ref, computed } from 'vue';
 import ParticipantsList from '@/components/room/ParticipantsList.vue';
 import InfoTab from '@/components/room/InfoTab.vue';
+// --- SOLUTION START ---
+// 1. Import our new ChatSystem component
+import ChatSystem from '@/components/room/ChatSystem.vue';
+// --- SOLUTION END ---
 
+// The placeholder is now only for un-built tabs
 const Placeholder = {
   template: '<div style="text-align: center; margin-top: 40px; color: #888;">Content coming soon...</div>'
 }
 
 const activeTab = ref('chat');
-const slideDirection = ref('slide-left'); 
+const slideDirection = ref('slide-left');
 
 const tabs = [
   { id: 'chat', label: 'Show Chat', title: 'CHATS', icon: '<path d="M240-400h320v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z" transform="scale(0.025) translate(0, 960)"/>'},
@@ -64,13 +66,16 @@ const tabs = [
   { id: 'info', label: 'Show Info', title: 'INFO', icon: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>' }
 ];
 
+// --- SOLUTION START ---
+// 2. Update the components map to use the real ChatSystem component.
 const components: { [key: string]: any } = {
-  chat: Placeholder,
+  chat: ChatSystem,
   media: Placeholder,
   voice: Placeholder,
   participants: ParticipantsList,
   info: InfoTab,
 };
+// --- SOLUTION END ---
 
 const activeComponent = computed(() => components[activeTab.value]);
 
@@ -84,15 +89,10 @@ function setActiveTab(tabId: string) {
 }
 </script>
 
-<!-- SOLUTION: Add the scoped style block below -->
 <style scoped>
 .tab-system-wrapper {
-  /* This tells the wrapper to grow and fill the available vertical space. */
   flex: 1;
-  /* This is crucial for flex-grow to work in a column layout. */
   min-height: 0;
-  
-  /* This makes the wrapper a flex container for its own children. */
   display: flex;
   flex-direction: column;
 }
