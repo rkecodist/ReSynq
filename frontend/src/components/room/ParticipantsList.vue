@@ -12,17 +12,18 @@
 
         <div class="participant-name-container">
           <!-- 
-            We determine which icon to show based on the user's role.
-            The `v-html` directive is used to render the raw SVG path. This is safe
-            here because the icon data is from our own trusted `icons.ts` file,
-            not from user input.
+            THIS IS THE REFACTORED PART:
+            - We are now using our new <Icon> component.
+            - The 'name' prop is dynamically set to either 'host' or 'user'.
+            - The old <svg> tag with the v-html directive is gone.
+            - We pass the size prop to control the icon's dimensions directly.
           -->
-          <svg
+          <Icon
+            :name="user.id === roomStore.hostId ? 'host' : 'user'"
             class="participant-icon"
             :class="user.id === roomStore.hostId ? 'host-icon' : 'viewer-icon'"
-            viewBox="0 0 24 24"
-            v-html="user.id === roomStore.hostId ? ROLE_ICONS.host : ROLE_ICONS.user"
-          ></svg>
+            :size="20"
+          />
           
           <span class="participant-name">{{ user.name }}</span>
           
@@ -36,15 +37,19 @@
 
 <script setup lang="ts">
 import { useRoomStore } from '@/stores/room';
-import { ROLE_ICONS } from '@/assets/icons';
+// THE SCRIPT IS NOW CLEANER:
+// 1. We import our new, reusable Icon component.
+import Icon from '@/components/common/Icon.vue';
+// 2. The direct import of ROLE_ICONS is no longer needed here.
+//    That logic is now encapsulated within Icon.vue.
 
 // Get a reactive instance of our room store. The component will now
 // automatically re-render whenever the data in this store changes.
 const roomStore = useRoomStore();
 
 // The script is very lean. Its only job is to provide the roomStore
-// and ROLE_ICONS to the template above. All the complex logic is
-// handled by the Pinia store and Vue's reactivity system.
+// to the template above. All the complex logic is handled by the
+// Pinia store and Vue's reactivity system.
 </script>
 
 <style scoped>
