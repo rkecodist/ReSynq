@@ -1,7 +1,4 @@
 <template>
-  <!-- 
-    SOLUTION: We add a class to this root div so we can target it with our new style.
-  -->
   <div class="tab-system-wrapper">
     <header class="room-actions-header">
       <div class="action-buttons-container">
@@ -38,8 +35,9 @@
       <div class="tab-content-wrapper">
         <Transition :name="slideDirection" mode="out-in">
           <!-- 
-            The 'id' attribute is added here so our child components 
-            (like ChatInput) can find this element for sizing calculations.
+            The 'id' attribute is added here. This allows child components 
+            (like ChatInput and EmojiPicker) to find their container 
+            and perform accurate size calculations.
           -->
           <component :is="activeComponent" :id="`${activeTab}-page`" class="tab-page" />
         </Transition>
@@ -52,7 +50,7 @@
 import { ref, computed } from 'vue';
 import ParticipantsList from '@/components/room/ParticipantsList.vue';
 import InfoTab from '@/components/room/InfoTab.vue';
-// 1. IMPORT THE NEW CHAT COMPONENT
+// 1. Import the new Chat component. This will now work correctly.
 import Chat from '@/components/room/Chat.vue';
 
 const Placeholder = {
@@ -71,7 +69,7 @@ const tabs = [
 ];
 
 const components: { [key: string]: any } = {
-  // 2. REPLACE THE PLACEHOLDER WITH THE ACTUAL CHAT COMPONENT
+  // 2. Replace the placeholder with our new, functional Chat component.
   chat: Chat,
   media: Placeholder,
   voice: Placeholder,
@@ -91,15 +89,10 @@ function setActiveTab(tabId: string) {
 }
 </script>
 
-<!-- SOLUTION: Add the scoped style block below -->
 <style scoped>
 .tab-system-wrapper {
-  /* This tells the wrapper to grow and fill the available vertical space. */
   flex: 1;
-  /* This is crucial for flex-grow to work in a column layout. */
   min-height: 0;
-  
-  /* This makes the wrapper a flex container for its own children. */
   display: flex;
   flex-direction: column;
 }
