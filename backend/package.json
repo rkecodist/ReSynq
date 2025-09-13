@@ -1,0 +1,31 @@
+{
+  "name": "synq",
+  "version": "1.0.0",
+  "description": "A synchronized watch party web app.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write \"**/*.{js,json,css,html}\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rkecodist/Synq.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rkecodist/Synq/issues"
+  },
+  "homepage": "https://github.com/rkecodist/Synq#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.19.2",
+    "nanoid": "^5.0.7",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.2"
+  }
+}
