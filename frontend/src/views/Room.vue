@@ -1,25 +1,14 @@
 <template>
-  <!-- 
-    The v-if ensures we don't try to render the room until the user's profile is loaded.
-    The `main-container` class comes from your global CSS and provides the main layout.
-  -->
   <div v-if="profileStore.hasProfile" class="main-container">
     
-    <!-- Video Player Placeholder -->
     <section class="video-wrapper" aria-label="Video area">
       <div class="video-player" id="video-player-container">
         <div class="video-placeholder" id="video-placeholder">
-          <!-- We will make this text dynamic in a future milestone -->
           <h3>Connecting to room...</h3>
         </div>
       </div>
     </section>
 
-    <!-- 
-      This is it. We are replacing all the old placeholder text with our single,
-      powerful TabSystem component. All the complexity of the tabs, participants list,
-      and info panel is now neatly encapsulated inside it.
-    -->
     <TabSystem />
 
   </div>
@@ -33,14 +22,22 @@ import { onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
 import { useRoomStore } from '@/stores/room';
+// --- SOLUTION START ---
+// 1. Import the new chat store
+import { useChatStore } from '@/stores/chat';
+// --- SOLUTION END ---
 import { useSocket } from '@/composables/useSocket';
-import TabSystem from '@/components/room/TabSystem.vue'; // Import our new component
+import TabSystem from '@/components/room/TabSystem.vue';
 
 // --- SETUP ---
 const route = useRoute();
 const router = useRouter();
 const profileStore = useProfileStore();
 const roomStore = useRoomStore();
+// --- SOLUTION START ---
+// 2. Get an instance of the chat store
+const chatStore = useChatStore();
+// --- SOLUTION END ---
 const { socket, connect, disconnect } = useSocket();
 
 const roomIdFromUrl = Array.isArray(route.params.roomId)
@@ -49,38 +46,75 @@ const roomIdFromUrl = Array.isArray(route.params.roomId)
 
 // --- LIFECYCLE HOOKS ---
 onMounted(() => {
-  // Guard Clause: If the user lands here without a profile, send them home.
   if (!profileStore.hasProfile) {
     router.push('/');
     return;
   }
 
-  // Set up the initial state in our Pinia store.
-  roomStore.setInitialState(roomIdFromUrl);
+  // --- SOLUTION START ---
+  // 3. Set the context for our chat history
+  chatStore.setContext(roomIdFromUrl, profileStore.userId!);
+  // --- SOLUTION END ---
 
-  // Connect to the WebSocket server.
+  roomStore.setInitialState(roomIdFromUrl);
   connect();
 
-  // Register all our event listeners.
   socket.on('connect', () => {
     roomStore.setConnectionState(socket.id);
     
-    // Once connected, we can emit the event to join the room.
     const joinData = {
       roomId: roomIdFromUrl,
       userId: profileStore.userId,
       username: profileStore.username,
-      sessionId: `session_${socket.id}`, // Placeholder
+      sessionId: `session_${socket.id}`,
       dpUrl: profileStore.dpUrl,
     };
     socket.emit('join-room', joinData);
   });
 
-  socket.on('room-joined', (data) => roomStore.setRoomJoined(data));
-  socket.on('user-joined', (data) => roomStore.addUser(data));
-  socket.on('user-left', (data) => roomStore.removeUser(data));
+  // --- Room Event Listeners ---
+  socket.on('room-joined', (data) => {
+    roomStore.setRoomJoined(data);
+    // --- SOLUTION START ---
+    // 4. Load chat history and add "You joined" message
+    chatStore.loadHistory();
+    chatStore.addSystemMessage([{ text: 'You joined the room.', isStrong: false }]);
+    // --- SOLUTION END ---
+  });
+
+  socket.on('user-joined', (data) => {
+    roomStore.addUser(data);
+    // --- SOLUTION START ---
+    // 5. Add "User joined" system message
+    chatStore.addSystemMessage([
+      { text: data.userName, isStrong: true },
+      { text: 'joined.', isStrong: false }
+    ]);
+    // --- SOLUTION END ---
+  });
+
+  socket.on('user-left', (data) => {
+    // We need the user's name before they are removed from the room store.
+    const userLeavingName = roomStore.users[data.userId]?.name || 'A user';
+    roomStore.removeUser(data);
+    // --- SOLUTION START ---
+    // 6. Add "User left" system message
+    chatStore.addSystemMessage([
+      { text: userLeavingName, isStrong: true },
+      { text: 'left.', isStrong: false }
+    ]);
+    // --- SOLUTION END ---
+  });
+
   socket.on('host-update', (data) => roomStore.setHost(data));
   socket.on('host-disconnected', () => roomStore.setHost({ hostId: null }));
+  
+  // --- SOLUTION START ---
+  // 7. Add the listener for incoming chat messages
+  socket.on('chat-message', (data) => {
+    chatStore.addChatMessage(data);
+  });
+  // --- SOLUTION END ---
   
   socket.on('session-deactivated', () => {
     alert('This session has been deactivated because you joined from another tab or window.');
@@ -94,17 +128,16 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  // Reset the room store to its default empty state.
+  // Reset both stores on cleanup
   roomStore.disconnect();
-  // The useSocket composable will automatically handle disconnecting the socket.
+  // --- SOLUTION START ---
+  // 8. Clear the chat history from the store
+  chatStore.clearChat();
+  // --- SOLUTION END ---
 });
 </script>
 
 <style scoped>
-/*
-  We remove the old placeholder styles and add a simple one for the loading text.
-  The main layout styles now come from your global CSS files.
-*/
 .loading-container {
   display: flex;
   justify-content: center;
